@@ -41,6 +41,8 @@ public class App {
 
         calculateMinTime(response.getTickets());
 
+        calculateAvgBetweenMedian(response.getTickets());
+
 
 
 
@@ -50,13 +52,24 @@ public class App {
     public static void calculateMinTime(List<Ticket> tickets){
 
         Stream<Ticket> ticketStream = tickets.stream();
-        tickets.stream()
-              .filter(ticket -> Objects.equals(ticket.getOrigin(), "VVO") && Objects.equals(ticket.getDestination(), "TLV"))
-            //  .collect(Collectors.toMap(Ticket::getCarrier, Ticket::getDurationFlight))
-              .sorted((t1, t2)->t1.getDurationFlight().compareTo(t2.getDurationFlight()))
-              .forEach(System.out::println);
-        //System.out.println(coll);
 
+
+       // Map<String, List<Duration>> mapDuration=
+                ticketStream
+                .filter(ticket -> Objects.equals(ticket.getOrigin(), "VVO") && Objects.equals(ticket.getDestination(), "TLV"))
+                .collect(Collectors.groupingBy(Ticket::getCarrier,
+                        Collectors.mapping(Ticket::getDurationFlight,
+                                Collectors.toList() )))
+                .values()
+                .stream()
+                        //.sorted()
+                        .forEach(System.out::println);
+
+
+
+
+
+       // System.out.println(mapDuration);
 
 
         //    .collect(groupingBy(Ticket::getCarrier));
@@ -72,7 +85,18 @@ public class App {
 
     }
 
-    public static void calculateAvgBetweenMedian(){
+    public static void calculateAvgBetweenMedian(List<Ticket> tickets){
+        Stream<Ticket> ticketStream = tickets.stream();
+        List<Integer> listPrice = ticketStream
+                .filter(ticket -> Objects.equals(ticket.getOrigin(), "VVO") && Objects.equals(ticket.getDestination(), "TLV"))
+                .map(Ticket::getPrice)
+                .sorted()
+                .toList();
+
+        var value = listPrice
+                .stream()
+                .mapToInt(Integer::intValue)
+                .average();
 
     }
 }

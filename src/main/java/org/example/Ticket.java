@@ -20,6 +20,7 @@ public class Ticket {
     String origin;
     private String destination;
     private String carrier;
+    private int price;
 
     private LocalDateTime departureDateTime;
     private LocalDateTime arrivalDateTime;
@@ -51,7 +52,7 @@ public class Ticket {
                 ", destination='" + destination + '\'' +
                 ", carrier='" + carrier +
                 ", durationFlight=" + getDurationFlight() +
-
+                ", price='" + price +
                 '}';
     }
 }
