@@ -1,12 +1,11 @@
 package org.example;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -20,43 +19,39 @@ public class Ticket {
 
     String origin;
     private String destination;
-    @JsonSetter("departure_date")
-    private LocalDate departureDate;
-    @JsonSetter("departure_time")
-    private LocalTime  departureTime;
-    @JsonSetter("arrival_date")
-    private LocalDate arrivalDate;
-    @JsonSetter("arrival_time")
-    private LocalTime arrivalTime;
+    private String carrier;
 
     private LocalDateTime departureDateTime;
     private LocalDateTime arrivalDateTime;
 
-    public void setDepartureDateTime() {
-        this.departureDateTime = this.departureDate.atTime(this.departureTime);
+    public Duration getDurationFlight(){
+        return Duration.between(departureDateTime, arrivalDateTime);
     }
 
-    public void setArrivalDateTime() {
-        this.arrivalDateTime = this.arrivalDate.atTime(this.arrivalTime);
+    @JsonCreator
+    public Ticket(
+            @JsonProperty("departure_date") LocalDate departureDate,
+            @JsonProperty("departure_time")LocalTime departureTime,
+            @JsonProperty("arrival_date") LocalDate arrivalDate,
+            @JsonProperty("arrival_time") LocalTime arrivalTime){
+        this.departureDateTime = departureDate.atTime(departureTime);
+        this.arrivalDateTime = arrivalDate.atTime(arrivalTime);
     }
-
-    private Map<String, String> unrecognizedFields = new HashMap<>();
 
     @JsonAnySetter
     public void allSetter(String fieldName, String fieldValue) {
         unrecognizedFields.put(fieldName, fieldValue);
     }
 
+    private Map<String, String> unrecognizedFields = new HashMap<>();
+
     @Override
     public String toString() {
         return "{origin='" + origin + '\'' +
                 ", destination='" + destination + '\'' +
-                ", departureDate=" + departureDate +
-                ", departureTime=" + departureTime +
-                ", arrivalDate=" + arrivalDate +
-                ", arrivalTime=" + arrivalTime +
-                ", departureDateTime=" + departureDateTime +
-                ", arrivalDateTime=" + arrivalDateTime +
+                ", carrier='" + carrier +
+                ", durationFlight=" + getDurationFlight() +
+
                 '}';
     }
 }
