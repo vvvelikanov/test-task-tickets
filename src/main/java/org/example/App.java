@@ -35,68 +35,47 @@ public class App {
 
         JsonResponseByTickets<Ticket> response = objectMapper.readValue(file, typeRef);
 
-        System.out.println(response);
-
-        System.out.println(response.getTickets().get(0).getDurationFlight().getSeconds() + "\n");
 
         calculateMinTime(response.getTickets());
 
-        calculateAvgBetweenMedian(response.getTickets());
-
-
-
-
+        System.out.println(calculateAvgBetweenMedian(response.getTickets()));
     }
 
     //Минимальное время полета между городами Владивосток и Тель-Авив для каждого авиаперевозчика
     public static void calculateMinTime(List<Ticket> tickets){
 
-        Stream<Ticket> ticketStream = tickets.stream();
-
-
-       // Map<String, List<Duration>> mapDuration=
-                ticketStream
+        tickets.stream()
                 .filter(ticket -> Objects.equals(ticket.getOrigin(), "VVO") && Objects.equals(ticket.getDestination(), "TLV"))
                 .collect(Collectors.groupingBy(Ticket::getCarrier,
                         Collectors.mapping(Ticket::getDurationFlight,
-                                Collectors.toList() )))
-                .values()
-                .stream()
-                        //.sorted()
-                        .forEach(System.out::println);
-
-
-
-
-
-       // System.out.println(mapDuration);
-
-
-        //    .collect(groupingBy(Ticket::getCarrier));
-                //.forEach(System.out::println);
-       // System.out.println(mapDuration);
-
-//        var str = ticketStream
-//                .filter(ticket -> Objects.equals(ticket.getOrigin(), "VVO") && Objects.equals(ticket.getDestination(), "TLV"))
-//                .map(Ticket::getDurationFlight)
-//                .toList();
-//              //  .sorted()
-//               // .forEach(System.out::println);
-
+                                Collectors.toList())))
+                        .forEach((key, value) -> {System.out.println(
+                                "carrier: " + key + " min time: " + value.stream()
+                                        .sorted()
+                                        .toList()
+                                        .get(0));});
     }
 
-    public static void calculateAvgBetweenMedian(List<Ticket> tickets){
+    //Разница между средней ценой и медианой для полета между городами  Владивосток и Тель-Авив
+    public static String  calculateAvgBetweenMedian(List<Ticket> tickets){
         Stream<Ticket> ticketStream = tickets.stream();
-        List<Integer> listPrice = ticketStream
+        List<Integer> listPrice =
+                ticketStream
                 .filter(ticket -> Objects.equals(ticket.getOrigin(), "VVO") && Objects.equals(ticket.getDestination(), "TLV"))
                 .map(Ticket::getPrice)
                 .sorted()
                 .toList();
 
-        var value = listPrice
+        double avg = listPrice
                 .stream()
                 .mapToInt(Integer::intValue)
-                .average();
+                .summaryStatistics()
+                .getAverage();
 
+        double median = listPrice.get(listPrice.size()/2);
+        if (listPrice.size()%2 == 0)
+            median = (median + listPrice.get(listPrice.size()/2-1)) / 2;
+
+        return Double.toString(Math.abs(avg-median));
     }
 }
