@@ -16,6 +16,5 @@ public class LocalTimeDeserializer extends JsonDeserializer<LocalTime> {
     public LocalTime deserialize(JsonParser p, DeserializationContext text)
             throws IOException {
         return LocalTime.parse(p.getValueAsString(), formatter);
-
     }
 }

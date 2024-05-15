@@ -17,6 +17,5 @@ public class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
     public LocalDate deserialize(JsonParser p, DeserializationContext text)
             throws IOException {
         return LocalDate.parse(p.getValueAsString(), formatter);
-
     }
 }

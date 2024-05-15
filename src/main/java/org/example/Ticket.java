@@ -16,7 +16,6 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 public class Ticket {
-
     String origin;
     private String destination;
     private String carrier;
@@ -25,18 +24,18 @@ public class Ticket {
     private LocalDateTime departureDateTime;
     private LocalDateTime arrivalDateTime;
 
-    public Duration getDurationFlight(){
+    public Duration getDurationFlight() {
         return Duration.between(departureDateTime, arrivalDateTime);
     }
 
     @JsonCreator
     public Ticket(
             @JsonProperty("departure_date") LocalDate departureDate,
-            @JsonProperty("departure_time")LocalTime departureTime,
+            @JsonProperty("departure_time") LocalTime departureTime,
             @JsonProperty("arrival_date") LocalDate arrivalDate,
-            @JsonProperty("arrival_time") LocalTime arrivalTime){
-        this.departureDateTime = departureDate.atTime(departureTime);
-        this.arrivalDateTime = arrivalDate.atTime(arrivalTime);
+            @JsonProperty("arrival_time") LocalTime arrivalTime) {
+        departureDateTime = departureDate.atTime(departureTime);
+        arrivalDateTime = arrivalDate.atTime(arrivalTime);
     }
 
     @JsonAnySetter
